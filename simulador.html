@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart.Bonus - Simulador de Incentivo 2026</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .logo .smart { color: #9c65fb; }
+        .logo .bonus { color: #ffffff; }
+
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+            gap: clamp(16px, 3vw, 30px);
+            margin-bottom: clamp(30px, 5vw, 50px);
+        }
+
+        .input-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #161616 100%);
+            border-radius: 16px;
+            padding: clamp(16px, 3vw, 28px);
+            border: 2px solid rgba(156, 101, 251, 0.3);
+        }
+
+        .input-card.warning-card {
+            border-color: rgba(255, 80, 80, 0.6) !important;
+            box-shadow: 0 0 20px rgba(255, 80, 80, 0.15);
+        }
+
+        .input-label {
+            display: block;
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
+            font-weight: 600;
+            color: #ebeb70;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-title {
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 14px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: clamp(12px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
+            background: #0a0a0a;
+            border: 2px solid rgba(156, 101, 251, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #9c65fb;
+            box-shadow: 0 0 0 3px rgba(156, 101, 251, 0.1);
+        }
+
+        select.input-field {
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%239c65fb' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 45px; 
+            background-color: #0a0a0a;
+        }
+
+        .slider-container {
+            margin-top: 16px;
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .slider-value-text {
+            font-size: clamp(1.2rem, 4vw, 1.4rem);
+            font-weight: 700;
+            color: #9c65fb;
+            transition: color 0.3s ease;
+        }
+
+        .slider-value-text.warning {
+            color: #ff5050;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to right, #9c65fb 0%, #9c65fb var(--value), #2a2a2a var(--value), #2a2a2a 100%);
+            border-radius: 10px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        input[type="range"].warning-slider {
+            background: linear-gradient(to right, #ff5050 0%, #ff5050 var(--value), #2a2a2a var(--value), #2a2a2a 100%);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            background: #ebeb70;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(235, 235, 112, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"].warning-slider::-webkit-slider-thumb {
+            background: #ff5050;
+            box-shadow: 0 4px 12px rgba(255, 80, 80, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            background: #ebeb70;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(235, 235, 112, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"].warning-slider::-moz-range-thumb {
+            background: #ff5050;
+        }
+
+        .results-section {
+            margin-top: clamp(30px, 5vw, 50px);
+            text-align: center;
+        }
+
+        .results-title {
+            font-size: clamp(1rem, 3.5vw, 1.5rem);
+            font-weight: 700;
+            color: #ebeb70;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 32px;
+            border-radius: 16px;
+            background: #1a1a1a;
+            border: 2px solid rgba(156, 101, 251, 0.2);
+        }
+
+        @media (max-width: 640px) {
+            .table-container {
+                border: none;
+                background: transparent;
+            }
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tbody tr {
+                background: #1a1a1a;
+                border: 2px solid rgba(156, 101, 251, 0.2);
+                border-radius: 14px;
+                margin-bottom: 14px;
+                padding: 16px;
+                position: relative;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 4px;
+                border-bottom: 1px solid rgba(156, 101, 251, 0.08);
+                font-size: 0.82rem;
+            }
+
+            td:last-child {
+                border-bottom: none;
+                padding-top: 12px;
+                margin-top: 4px;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-size: 0.7rem;
+                font-weight: 600;
+                color: #888888;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                flex-shrink: 0;
+                margin-right: 10px;
+            }
+
+            td.currency {
+                font-size: 1rem;
+            }
+        }
+
+        @media (min-width: 641px) {
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.88rem;
+            }
+
+            thead {
+                background: linear-gradient(135deg, #9c65fb 0%, #7c45db 100%);
+            }
+
+            th {
+                padding: 16px 14px;
+                text-align: left;
+                font-weight: 700;
+                color: #ffffff;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                font-size: 0.78rem;
+                border-bottom: 2px solid #ebeb70;
+                white-space: nowrap; 
+            }
+
+            tbody tr {
+                border-bottom: 1px solid rgba(156, 101, 251, 0.1);
+                transition: background 0.2s ease;
+            }
+
+            tbody tr:hover {
+                background: rgba(156, 101, 251, 0.05);
+            }
+
+            td {
+                padding: 14px;
+                color: #cccccc;
+                font-weight: 500;
+            }
+
+            td.value {
+                font-weight: 700;
+                color: #ffffff;
+            }
+
+            td.currency {
+                font-weight: 700;
+                color: #ebeb70;
+                font-size: 1rem;
+            }
+
+            td.currency.zeroed {
+                color: #888888;
+            }
+        }
+
+        td.value {
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        td.currency {
+            font-weight: 700;
+            color: #ebeb70;
+        }
+
+        td.currency.zeroed {
+            color: #888888;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-sim {
+            background: rgba(235, 235, 112, 0.15);
+            color: #ebeb70;
+            border: 1px solid #ebeb70;
+        }
+
+        .badge-nao {
+            background: rgba(153, 153, 153, 0.2);
+            color: #999999;
+            border: 1px solid #666666;
+        }
+
+        @media (max-width: 900px) and (min-width: 641px) {
+            .inputs-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <header>
+            <div class="logo">
+                <span class="smart">smart</span><span class="bonus">.bonus</span>
+            </div>
+        </header>
+
+            <div class="inputs-grid">
+
+                <div class="input-card">
+                    <label class="input-label">Entrada de Dados</label>
+                    <h3 class="input-title">Remuneração Mensal</h3>
+                    <input type="text" id="salario" class="input-field" placeholder="R$ 0,00" value="R$ 2.000,00">
+                </div>
+
+                <div class="input-card">
+                    <label class="input-label">Classificação</label>
+                    <h3 class="input-title">Grade</h3>
+                    <select id="grade" class="input-field">
+                        <option value="Grade I">Grade I</option>
+                        <option value="Grade II">Grade II</option>
+                        <option value="Grade III">Grade III</option>
+                    </select>
+                </div>
+
+                <div class="input-card" id="metasCard">
+                    <label class="input-label">Fator SMART.METAS</label>
+                    <h3 class="input-title">Projeção de Atingimento</h3>
+                    <div class="slider-container">
+                        <div class="slider-value">
+                            <span class="slider-value-text" id="metasValue">100%</span>
+                        </div>
+                        <input type="range" id="metas" min="0" max="100" value="100" step="1">
+                        
+                    </div>
+                </div>
+
+                <div class="input-card" id="tempoCard">
+                    <label class="input-label">Fator SMART.TEMPO</label>
+                    <h3 class="input-title">Meses Completos até 2026</h3>
+                    <div class="slider-container">
+                        <div class="slider-value">
+                            <span class="slider-value-text" id="tempoValue">12</span>
+                        </div>
+                        <input type="range" id="tempo" min="1" max="12" value="12" step="1">
+                        
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="results-section">
+                <h2 class="results-title">Simulação de Cenários</h2>
+
+                <div class="table-container">
+                    <table id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>Remuneração Mensal</th>
+                                <th>SMART.METAS</th>
+                                <th>SMART.TEMPO</th>
+                                <th>SMART.IMPACTO</th>
+                                <th>Faixa</th>
+                                <th>1º Semestre</th>
+                                <th>2º Semestre</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody">
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            </div>
+
+    <script>
+
+        const salarioInput     = document.getElementById('salario');
+        const gradeSelect      = document.getElementById('grade');
+        const metasSlider      = document.getElementById('metas');
+        const tempoSlider      = document.getElementById('tempo');
+        const metasValueEl     = document.getElementById('metasValue');
+        const tempoValue       = document.getElementById('tempoValue');
+        const resultsBody      = document.getElementById('resultsBody');
+        const metasCard        = document.getElementById('metasCard');
+        const tempoCard        = document.getElementById('tempoCard');
+
+        const METAS_MINIMO = 70; 
+        const TEMPO_MINIMO = 3;  
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function parseCurrency(value) {
+            return parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+        }
+
+        salarioInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = (parseInt(value) / 100).toFixed(2);
+            e.target.value = formatCurrency(value);
+            calculate();
+        });
+
+        salarioInput.addEventListener('blur', function(e) {
+            let value = parseCurrency(e.target.value);
+            e.target.value = formatCurrency(value);
+        });
+
+        metasSlider.addEventListener('input', function(e) {
+            const value = parseInt(e.target.value);
+            metasValueEl.textContent = value + '%';
+
+            e.target.style.setProperty('--value', value + '%');
+
+            const isBelowMin = value < METAS_MINIMO;
+            metasValueEl.classList.toggle('warning', isBelowMin);    
+            metasCard.classList.toggle('warning-card', isBelowMin);  
+    
+            e.target.classList.toggle('warning-slider', isBelowMin); 
+
+            calculate();
+        });
+
+        tempoSlider.addEventListener('input', function(e) {
+            const value = parseInt(e.target.value);
+            tempoValue.textContent = value;
+
+            e.target.style.setProperty('--value', (value / 12 * 100) + '%');
+
+            const isBelowMin = value < TEMPO_MINIMO;
+            tempoValue.classList.toggle('warning', isBelowMin);
+            tempoCard.classList.toggle('warning-card', isBelowMin);
+
+            e.target.classList.toggle('warning-slider', isBelowMin);
+
+            calculate();
+        });
+
+        gradeSelect.addEventListener('change', calculate);
+
+        function getSemestralMult(grade, faixaNum, impacto) {
+            const tabela = {
+                'Grade I': {
+                    1: { sem: { sem1: 0.4, sem2: 0.6 }, com: { sem1: 0.4, sem2: 2.6 } },
+                    2: { sem: { sem1: 0.8, sem2: 1.2 }, com: { sem1: 0.8, sem2: 3.2 } },
+                    3: { sem: { sem1: 1.4, sem2: 1.6 }, com: { sem1: 1.4, sem2: 3.6 } }
+                },
+                'Grade II': {
+                    1: { sem: { sem1: 0.5, sem2: 1.0 }, com: { sem1: 0.5, sem2: 3.0 } },
+                    2: { sem: { sem1: 1.2, sem2: 1.8 }, com: { sem1: 1.2, sem2: 3.8 } },
+                    3: { sem: { sem1: 2.0, sem2: 2.5 }, com: { sem1: 2.0, sem2: 4.5 } }
+                },
+                'Grade III': {
+                    1: { sem: { sem1: 0.7, sem2: 1.3 }, com: { sem1: 0.7, sem2: 3.3 } },
+                    2: { sem: { sem1: 1.6, sem2: 2.4 }, com: { sem1: 1.6, sem2: 4.4 } },
+                    3: { sem: { sem1: 2.7, sem2: 3.3 }, com: { sem1: 2.7, sem2: 5.3 } }
+                }
+            };
+            const gradeData = tabela[grade];
+            if (!gradeData || !gradeData[faixaNum]) return { sem1: 0, sem2: 0 };
+            return impacto === 'Sim' ? gradeData[faixaNum].com : gradeData[faixaNum].sem;
+        }
+
+        function getFaixaNome(faixaNum) {
+            const nomes = {
+                1: 'Faixa 1 (>= 15MM e <20MM)',
+                2: 'Faixa 2 (>=20MM e <25MM)',
+                3: 'Faixa 3 (>=25MM)'
+            };
+            return nomes[faixaNum] || '';
+        }
+
+        function calculatePremio(salario, grade, metas, tempo, impacto, faixaNum) {
+            if (metas < METAS_MINIMO) return { total: 0, sem1: 0, sem2: 0 };
+            if (tempo < TEMPO_MINIMO) return { total: 0, sem1: 0, sem2: 0 };
+
+            const tempoMap = {
+                1: 0, 2: 0,
+                3: 3/12, 4: 4/12, 5: 5/12, 6: 6/12,
+                7: 7/12, 8: 8/12, 9: 9/12, 10: 10/12,
+                11: 11/12, 12: 12/12
+            };
+            const tempoFrac = tempoMap[tempo] ?? 0;
+            const metasFrac = metas / 100;
+
+            const mult = getSemestralMult(grade, faixaNum, impacto);
+            const base = salario * metasFrac * tempoFrac;
+
+            return {
+                total: base * (mult.sem1 + mult.sem2),
+                sem1:  base * mult.sem1,
+                sem2:  base * mult.sem2
+            };
+        }
+
+        function calculate() {
+            const salario = parseCurrency(salarioInput.value);
+            const grade   = gradeSelect.value;
+            const metas   = parseInt(metasSlider.value);
+            const tempo   = parseInt(tempoSlider.value);
+
+            metasSlider.style.setProperty('--value', metas + '%');
+            tempoSlider.style.setProperty('--value', (tempo / 12 * 100) + '%');
+
+            const isZeroed = metas < METAS_MINIMO || tempo < TEMPO_MINIMO;
+
+            const cenarios = [];
+            [1, 2, 3].forEach(faixaNum => {
+                ['Não', 'Sim'].forEach(impacto => {
+                    const result = calculatePremio(salario, grade, metas, tempo, impacto, faixaNum);
+                    cenarios.push({
+                        faixaNum,
+                        impacto,
+                        premio: result.total,
+                        sem1:   result.sem1,
+                        sem2:   result.sem2
+                    });
+                });
+            });
+
+            resultsBody.innerHTML = cenarios.map(c => {
+                const badgeClass  = c.impacto === 'Sim' ? 'badge-sim' : 'badge-nao';
+                const currZeroed  = isZeroed ? ' zeroed' : '';
+
+                return `
+                    <tr>
+                        <td data-label="Remuneração" class="value">${formatCurrency(salario)}</td>
+                        <td data-label="SMART.METAS">${metas}%</td>
+                        <td data-label="SMART.TEMPO">${tempo} ${tempo === 1 ? 'mês' : 'meses'}</td>
+                        <td data-label="SMART.IMPACTO"><span class="badge ${badgeClass}">${c.impacto}</span></td>
+                        <td data-label="Faixa">${getFaixaNome(c.faixaNum)}</td>
+                        <td data-label="1º Semestre" class="currency${currZeroed}">${formatCurrency(c.sem1)}</td>
+                        <td data-label="2º Semestre" class="currency${currZeroed}">${formatCurrency(c.sem2)}</td>
+                    </tr>`;
+            }).join('');
+        }
+
+        calculate();
+
+    </script>
+</body>
+</html>

@@ -5,29 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart.Bonus - Simulador de Incentivo 2026</title>
 
+    <!-- Fontes externas e arquivo CSS do projeto -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- Botão fixo da cartilha no canto superior direito -->
+    <a href="https://github.com/JDr0pe/simulador_bonus_is" target="_blank" class="btn-cartilha">📄 Cartilha</a>
+
+    <!-- Container geral que centraliza o conteúdo da página -->
     <div class="container">
 
+        <!-- Cabeçalho com o logotipo e descrição do bônus -->
         <header>
             <div class="logo">
                 <span class="smart">smart</span><span class="bonus">.bonus</span>
             </div>
             <div class="subtitle">Programa de Incentivo de Longo Prazo 2026</div>
-
         </header>
 
+        <!-- Bloco principal do simulador (inputs + resultados) -->
+        <div class="simulator-container">
+
+            <!-- Grid que organiza os cartões de entrada de dados -->
             <div class="inputs-grid">
 
+                <!-- Entrada da remuneração mensal -->
                 <div class="input-card">
                     <label class="input-label">Entrada de Dados</label>
                     <h3 class="input-title">Remuneração Mensal</h3>
                     <input type="text" id="salario" class="input-field" placeholder="R$ 0,00" value="R$ 2.000,00">
                 </div>
 
+                <!-- Seleção do Grade do colaborador -->
                 <div class="input-card">
                     <label class="input-label">Classificação</label>
                     <h3 class="input-title">Grade</h3>
@@ -38,6 +49,7 @@
                     </select>
                 </div>
 
+                <!-- Controle de atingimento de metas -->
                 <div class="input-card" id="metasCard">
                     <label class="input-label">Fator SMART.METAS</label>
                     <h3 class="input-title">Projeção de Atingimento</h3>
@@ -46,10 +58,14 @@
                             <span class="slider-value-text" id="metasValue">100%</span>
                         </div>
                         <input type="range" id="metas" min="0" max="100" value="100" step="1">
-                        
+                        <!-- Banner de aviso se o atingimento de metas for menor que 70% -->
+                        <div class="metas-warning" id="metasWarning">
+                            ⚠️ Abaixo de 70% todos os prêmios zerados
+                        </div>
                     </div>
                 </div>
 
+                <!-- Controle dos meses trabalhados no ano -->
                 <div class="input-card" id="tempoCard">
                     <label class="input-label">Fator SMART.TEMPO</label>
                     <h3 class="input-title">Meses Completos até 2026</h3>
@@ -58,12 +74,16 @@
                             <span class="slider-value-text" id="tempoValue">12</span>
                         </div>
                         <input type="range" id="tempo" min="1" max="12" value="12" step="1">
-                        
+                        <!-- Banner de aviso se os meses de casa forem menores que 3 -->
+                        <div class="metas-warning" id="tempoWarning">
+                            ⚠️ Abaixo de 3 meses todos os prêmios zerados
+                        </div>
                     </div>
                 </div>
 
-            </div>
+            </div> <!-- Fim da inputs-grid -->
 
+            <!-- Seção dos resultados e cenários de bônus -->
             <div class="results-section">
                 <h2 class="results-title">Simulação de Cenários</h2>
 
@@ -80,6 +100,7 @@
                                 <th>2º Semestre</th>
                             </tr>
                         </thead>
+                        <!-- O Javascript injeta as linhas da simulação aqui -->
                         <tbody id="resultsBody">
                             
                         </tbody>
@@ -87,10 +108,10 @@
                 </div>
 
             </div>
-            </div>
+        </div> <!-- Fim da simulator-container -->
 
     <script>
-
+        // --- MAPEAMENTO DOS ELEMENTOS DO DOM ---
         const salarioInput     = document.getElementById('salario');
         const gradeSelect      = document.getElementById('grade');
         const metasSlider      = document.getElementById('metas');
@@ -101,9 +122,13 @@
         const metasCard        = document.getElementById('metasCard');
         const tempoCard        = document.getElementById('tempoCard');
 
-        const METAS_MINIMO = 70; 
-        const TEMPO_MINIMO = 3;  
+        // Regras do regulamento do bônus
+        const METAS_MINIMO = 70; // Elegibilidade mínima de metas (70%)
+        const TEMPO_MINIMO = 3;  // Tempo mínimo de permanência (3 meses)
 
+        // --- FUNÇÕES AUXILIARES DE FORMATAÇÃO ---
+
+        // Transforma número em moeda Real formatada (Ex: R$ 2.000,00)
         function formatCurrency(value) {
             return new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
@@ -111,10 +136,14 @@
             }).format(value);
         }
 
+        // Converte a string de moeda formatada de volta para número puro
         function parseCurrency(value) {
             return parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
         }
 
+        // --- EVENTOS DE INTERAÇÃO DOS CAMPOS ---
+
+        // Aplica a máscara e atualiza os cálculos conforme o salário é digitado
         salarioInput.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             value = (parseInt(value) / 100).toFixed(2);
@@ -122,11 +151,13 @@
             calculate();
         });
 
+        // Formata o salário adequadamente ao sair do campo (blur)
         salarioInput.addEventListener('blur', function(e) {
             let value = parseCurrency(e.target.value);
             e.target.value = formatCurrency(value);
         });
 
+        // Trata a mudança do slider de Metas e aplica alertas visuais se cair abaixo do mínimo
         metasSlider.addEventListener('input', function(e) {
             const value = parseInt(e.target.value);
             metasValueEl.textContent = value + '%';
@@ -134,14 +165,15 @@
             e.target.style.setProperty('--value', value + '%');
 
             const isBelowMin = value < METAS_MINIMO;
-            metasValueEl.classList.toggle('warning', isBelowMin);    
-            metasCard.classList.toggle('warning-card', isBelowMin);  
-    
-            e.target.classList.toggle('warning-slider', isBelowMin); 
+            metasValueEl.classList.toggle('warning', isBelowMin);    // texto fica vermelho
+            metasCard.classList.toggle('warning-card', isBelowMin);  // card fica vermelho
+            metasWarning.classList.toggle('visible', isBelowMin);    // banner aparece
+            e.target.classList.toggle('warning-slider', isBelowMin); // trilha fica vermelha
 
             calculate();
         });
 
+        // Trata a mudança do slider de Tempo e aplica alertas visuais se cair abaixo do mínimo
         tempoSlider.addEventListener('input', function(e) {
             const value = parseInt(e.target.value);
             tempoValue.textContent = value;
@@ -151,14 +183,18 @@
             const isBelowMin = value < TEMPO_MINIMO;
             tempoValue.classList.toggle('warning', isBelowMin);
             tempoCard.classList.toggle('warning-card', isBelowMin);
-
+            tempoWarning.classList.toggle('visible', isBelowMin);
             e.target.classList.toggle('warning-slider', isBelowMin);
 
             calculate();
         });
 
+        // Recalcula tudo se a classificação (Grade) for alterada
         gradeSelect.addEventListener('change', calculate);
 
+        // --- REGRAS E TABELAS DO BÔNUS ---
+
+        // Retorna os multiplicadores de salários aplicáveis no 1º e 2º semestres
         function getSemestralMult(grade, faixaNum, impacto) {
             const tabela = {
                 'Grade I': {
@@ -179,9 +215,11 @@
             };
             const gradeData = tabela[grade];
             if (!gradeData || !gradeData[faixaNum]) return { sem1: 0, sem2: 0 };
+            // Se tiver o impacto 'Sim', retorna multiplicadores maiores (coluna com impacto)
             return impacto === 'Sim' ? gradeData[faixaNum].com : gradeData[faixaNum].sem;
         }
 
+        // Traduz o número da faixa para o texto correspondente da regra
         function getFaixaNome(faixaNum) {
             const nomes = {
                 1: 'Faixa 1 (>= 15MM e <20MM)',
@@ -191,10 +229,15 @@
             return nomes[faixaNum] || '';
         }
 
+        // --- FUNÇÕES DE CÁLCULO E RENDERIZAÇÃO ---
+
+        // Executa a fórmula matemática básica do bônus proporcional
         function calculatePremio(salario, grade, metas, tempo, impacto, faixaNum) {
+            // Zera prêmios se as metas ou tempo mínimos não forem atingidos
             if (metas < METAS_MINIMO) return { total: 0, sem1: 0, sem2: 0 };
             if (tempo < TEMPO_MINIMO) return { total: 0, sem1: 0, sem2: 0 };
 
+            // Proporcionalidade baseada em meses trabalhados
             const tempoMap = {
                 1: 0, 2: 0,
                 3: 3/12, 4: 4/12, 5: 5/12, 6: 6/12,
@@ -214,17 +257,20 @@
             };
         }
 
+        // Função principal que lê os dados, calcula todas as possibilidades e gera as linhas na tabela
         function calculate() {
             const salario = parseCurrency(salarioInput.value);
             const grade   = gradeSelect.value;
             const metas   = parseInt(metasSlider.value);
             const tempo   = parseInt(tempoSlider.value);
 
+            // Ajusta o progresso visual dos sliders
             metasSlider.style.setProperty('--value', metas + '%');
             tempoSlider.style.setProperty('--value', (tempo / 12 * 100) + '%');
 
             const isZeroed = metas < METAS_MINIMO || tempo < TEMPO_MINIMO;
 
+            // Gera e popula os cenários na tabela cruzando Faixas e Fator de Impacto
             const cenarios = [];
             [1, 2, 3].forEach(faixaNum => {
                 ['Não', 'Sim'].forEach(impacto => {
@@ -239,6 +285,7 @@
                 });
             });
 
+            // Converte os dados gerados em código HTML
             resultsBody.innerHTML = cenarios.map(c => {
                 const badgeClass  = c.impacto === 'Sim' ? 'badge-sim' : 'badge-nao';
                 const currZeroed  = isZeroed ? ' zeroed' : '';
@@ -256,6 +303,7 @@
             }).join('');
         }
 
+        // Execução inicial ao carregar a página
         calculate();
 
     </script>

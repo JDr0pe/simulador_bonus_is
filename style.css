@@ -1,3 +1,4 @@
+/* --- RESET E ESTILOS GERAIS --- */
 * {
     margin: 0;
     padding: 0;
@@ -13,17 +14,29 @@ body {
     -webkit-text-size-adjust: 100%;
 }
 
+/* --- LAYOUT E ESTRUTURA --- */
 .container {
     max-width: 1400px;
     margin: 0 auto;
 }
 
+/* Container do simulador principal */
+.simulator-container {
+    background: #111111;
+    border-radius: 20px;
+    padding: clamp(16px, 4vw, 40px);
+    box-shadow: 0 20px 60px rgba(156, 101, 251, 0.15);
+    border: 1px solid rgba(156, 101, 251, 0.2);
+}
+
+/* Cabeçalho da página */
 header {
     text-align: center;
     margin-bottom: 32px;
     padding: 20px 0;
 }
 
+/* Logo da aplicação */
 .logo {
     font-size: clamp(2rem, 8vw, 3.5rem);
     font-weight: 800;
@@ -34,6 +47,7 @@ header {
 .logo .smart { color: #9c65fb; }
 .logo .bonus { color: #ffffff; }
 
+/* Subtítulo amarelo do sistema */
 .subtitle {
     font-size: clamp(0.8rem, 3vw, 1.1rem);
     color: #ebeb70; /* amarelo característico do sistema */
@@ -41,6 +55,7 @@ header {
     letter-spacing: 0.5px;
 }
 
+/* Grade de inputs do simulador */
 .inputs-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
@@ -48,6 +63,7 @@ header {
     margin-bottom: clamp(30px, 5vw, 50px);
 }
 
+/* --- CARTÕES DE ENTRADA (INPUT CARDS) --- */
 .input-card {
     background: linear-gradient(135deg, #1a1a1a 0%, #161616 100%);
     border-radius: 16px;
@@ -55,6 +71,7 @@ header {
     border: 2px solid rgba(156, 101, 251, 0.3);
 }
 
+/* Estado de alerta se o valor for abaixo do mínimo permitido */
 .input-card.warning-card {
     border-color: rgba(255, 80, 80, 0.6) !important;
     box-shadow: 0 0 20px rgba(255, 80, 80, 0.15);
@@ -77,6 +94,7 @@ header {
     margin-bottom: 14px;
 }
 
+/* Campos de formulário (inputs de texto e selects) */
 .input-field {
     width: 100%;
     padding: clamp(12px, 2vw, 14px) clamp(12px, 2.5vw, 18px);
@@ -97,6 +115,7 @@ header {
     box-shadow: 0 0 0 3px rgba(156, 101, 251, 0.1);
 }
 
+/* Customização da seta do select drop-down */
 select.input-field {
     cursor: pointer;
     appearance: none;
@@ -108,10 +127,12 @@ select.input-field {
     background-color: #0a0a0a;
 }
 
+/* --- CONTROLES DESLIZANTES (SLIDERS / RANGE) --- */
 .slider-container {
     margin-top: 16px;
 }
 
+/* Valor numérico exibido acima do slider */
 .slider-value {
     display: flex;
     justify-content: space-between;
@@ -130,6 +151,7 @@ select.input-field {
     color: #ff5050;
 }
 
+/* Estilo da barra horizontal do slider */
 input[type="range"] {
     width: 100%;
     height: 8px;
@@ -141,10 +163,12 @@ input[type="range"] {
     touch-action: manipulation;
 }
 
+/* Barra do slider em estado de alerta */
 input[type="range"].warning-slider {
     background: linear-gradient(to right, #ff5050 0%, #ff5050 var(--value), #2a2a2a var(--value), #2a2a2a 100%);
 }
 
+/* Botão arrastável do slider para navegadores baseados em Webkit (Chrome, Safari, Edge) */
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -162,6 +186,7 @@ input[type="range"].warning-slider::-webkit-slider-thumb {
     box-shadow: 0 4px 12px rgba(255, 80, 80, 0.4);
 }
 
+/* Botão arrastável do slider para o Firefox */
 input[type="range"]::-moz-range-thumb {
     width: 28px;
     height: 28px;
@@ -177,6 +202,26 @@ input[type="range"].warning-slider::-moz-range-thumb {
     background: #ff5050;
 }
 
+/* Caixa com mensagem de aviso de bônus zerado */
+.metas-warning {
+    margin-top: 12px;
+    padding: 8px 14px;
+    background: rgba(255, 80, 80, 0.1);
+    border: 1px solid rgba(255, 80, 80, 0.4);
+    border-radius: 8px;
+    font-size: clamp(0.72rem, 2vw, 0.78rem);
+    font-weight: 600;
+    color: #ff7070;
+    text-align: center;
+    letter-spacing: 0.3px;
+    display: none;
+}
+
+.metas-warning.visible {
+    display: block;
+}
+
+/* --- SEÇÃO DE RESULTADOS / TABELA --- */
 .results-section {
     margin-top: clamp(30px, 5vw, 50px);
     text-align: center;
@@ -191,6 +236,7 @@ input[type="range"].warning-slider::-moz-range-thumb {
     letter-spacing: 2px;
 }
 
+/* Wrapper da tabela para scroll lateral caso estoure no desktop */
 .table-container {
     overflow-x: auto;
     margin-top: 32px;
@@ -199,6 +245,7 @@ input[type="range"].warning-slider::-moz-range-thumb {
     border: 2px solid rgba(156, 101, 251, 0.2);
 }
 
+/* Regras para dispositivos móveis (telas pequenas) - Transforma a tabela em cartões verticais */
 @media (max-width: 640px) {
     .table-container {
         border: none;
@@ -210,7 +257,7 @@ input[type="range"].warning-slider::-moz-range-thumb {
     }
 
     thead {
-        display: none;
+        display: none; /* Esconde o cabeçalho original da tabela */
     }
 
     tbody tr {
@@ -237,6 +284,7 @@ input[type="range"].warning-slider::-moz-range-thumb {
         margin-top: 4px;
     }
 
+    /* Insere o nome da coluna de forma responsiva puxando o atributo "data-label" do HTML */
     td::before {
         content: attr(data-label);
         font-size: 0.7rem;
@@ -253,6 +301,7 @@ input[type="range"].warning-slider::-moz-range-thumb {
     }
 }
 
+/* Regras para computadores e tablets (telas médias e grandes) - Tabela padrão */
 @media (min-width: 641px) {
     table {
         width: 100%;
@@ -307,6 +356,7 @@ input[type="range"].warning-slider::-moz-range-thumb {
     }
 }
 
+/* Classes comuns de formatação de células de dados */
 td.value {
     font-weight: 700;
     color: #ffffff;
@@ -317,10 +367,12 @@ td.currency {
     color: #ebeb70;
 }
 
+/* Cor acinzentada para os valores zerados (caso as metas/meses fiquem abaixo do mínimo) */
 td.currency.zeroed {
     color: #888888;
 }
 
+/* --- CRONOGRAMA / BADGES --- */
 .badge {
     display: inline-block;
     padding: 4px 10px;
@@ -331,20 +383,53 @@ td.currency.zeroed {
     letter-spacing: 0.5px;
 }
 
+/* Badge indicativo de SIM (com impacto) */
 .badge-sim {
     background: rgba(235, 235, 112, 0.15);
     color: #ebeb70;
     border: 1px solid #ebeb70;
 }
 
+/* Badge indicativo de NÃO (sem impacto) */
 .badge-nao {
     background: rgba(153, 153, 153, 0.2);
     color: #999999;
     border: 1px solid #666666;
 }
 
+/* Ajuste na visualização do grid para tablets (telas médias) */
 @media (max-width: 900px) and (min-width: 641px) {
     .inputs-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* --- BOTÃO FLUTUANTE DA CARTILHA --- */
+.btn-cartilha {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    background: linear-gradient(135deg, #9c65fb 0%, #7c45db 100%);
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 18px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 18px rgba(156, 101, 251, 0.45);
+    transition: all 0.25s ease;
+}
+
+.btn-cartilha:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(156, 101, 251, 0.6);
 }
